@@ -1,2 +1,2 @@
 # Velocity
-Modelling scripts for normative model 
+Modelling scripts for velocity normative models
