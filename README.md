@@ -134,13 +134,13 @@ visits are months apart this can discard a large fraction of your data. **Pairs 
 
 Five sets of matrices from this study are provided in `Velocity_matrices/`:
 
-| directory | atlas | cohort |
+| directory | atlas | split |
 | --- | --- | --- |
-| `DK_retrain/` | Desikan–Killiany | healthy ageing (retrain) |
-| `DK_demented/` | Desikan–Killiany | dementia |
-| `SC_retrain/` | subcortical | healthy ageing (retrain) |
-| `SC_demented/` | subcortical | dementia |
-| `DES_demented/` | Destrieux | dementia |
+| `DK_test_set/` | Desikan–Killiany | test set |
+| `DK_full_set/` | Desikan–Killiany | full dataset |
+| `SC_test_set/` | subcortical | test set |
+| `SC_full_set/` | subcortical | full dataset |
+| `DES_test_set/` | Destrieux | test set |
 
 Each directory uses the layout `batch_<N>_<measure>/Velocity/velocity_objects_new_<date>.pkl`.
 The template scripts recognise this automatically — just pass the directory as `--velocity`:
@@ -148,7 +148,7 @@ The template scripts recognise this automatically — just pass the directory as
 ```bash
 python VELOCITY/run_velocity_template.py \
     --data my_z.csv \
-    --velocity Velocity_matrices/DK_retrain/ \
+    --velocity Velocity_matrices/DK_test_set/ \
     --measure L_bankssts \
     --output-dir results/
 ```
@@ -156,6 +156,20 @@ python VELOCITY/run_velocity_template.py \
 Or in the notebook, set:
 
 ```python
-VELOCITY_PATH = "Velocity_matrices/DK_retrain/"
+VELOCITY_PATH = "Velocity_matrices/DK_test_set/"
 MEASURE = "L_bankssts"
+```
+
+### Example dataset
+
+`VELOCITY/example_data/example_z_scores_DK.csv` is a small synthetic dataset (15 subjects,
+2–3 visits each, ages 50–80) with five DK cortical thickness measures. Use it to try the
+pipeline with the pre-computed matrices without needing your own data:
+
+```bash
+python VELOCITY/run_velocity_template.py \
+    --data VELOCITY/example_data/example_z_scores_DK.csv \
+    --velocity Velocity_matrices/DK_test_set/ \
+    --measure L_bankssts L_fusiform L_inferiorparietal L_precentral R_superiortemporal \
+    --output-dir results/
 ```
