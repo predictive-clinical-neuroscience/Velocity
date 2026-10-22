@@ -129,3 +129,33 @@ Two patterns are worth understanding if you see them. **Repeated ages within a s
 mean your ages collapse to the same whole year, and only the first survives — if your
 visits are months apart this can discard a large fraction of your data. **Pairs with
 `r < 0.3`** are too far apart in age for the velocity matrix to relate them.
+
+### Pre-computed velocity matrices
+
+Five sets of matrices from this study are provided in `Velocity_matrices/`:
+
+| directory | atlas | cohort |
+| --- | --- | --- |
+| `DK_retrain/` | Desikan–Killiany | healthy ageing (retrain) |
+| `DK_demented/` | Desikan–Killiany | dementia |
+| `SC_retrain/` | subcortical | healthy ageing (retrain) |
+| `SC_demented/` | subcortical | dementia |
+| `DES_demented/` | Destrieux | dementia |
+
+Each directory uses the layout `batch_<N>_<measure>/Velocity/velocity_objects_new_<date>.pkl`.
+The template scripts recognise this automatically — just pass the directory as `--velocity`:
+
+```bash
+python VELOCITY/run_velocity_template.py \
+    --data my_z.csv \
+    --velocity Velocity_matrices/DK_retrain/ \
+    --measure L_bankssts \
+    --output-dir results/
+```
+
+Or in the notebook, set:
+
+```python
+VELOCITY_PATH = "Velocity_matrices/DK_retrain/"
+MEASURE = "L_bankssts"
+```

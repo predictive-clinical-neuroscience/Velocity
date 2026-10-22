@@ -129,19 +129,32 @@ def load_data(path: str | Path) -> pd.DataFrame:
 def resolve_velocity(path: str | Path, measure: str):
     """Load the velocity matrix for one measure.
 
-    Accepts a single file used for every measure, or a directory laid out as
-    <dir>/<measure>/velocity_objects.pkl.
+    Accepts a single .pkl file, or a directory in one of two layouts:
+
+      1. ``<dir>/<measure>/velocity_objects.pkl``
+      2. ``<dir>/batch_*_<measure>/Velocity/velocity_objects_new_*.pkl``
+         (the layout used by the pre-computed matrices in ``Velocity_matrices/``)
     """
     path = Path(path)
-    if path.is_dir():
-        candidate = path / measure / "velocity_objects.pkl"
-        if not candidate.exists():
-            raise FileNotFoundError(
-                f"No velocity matrix for {measure!r} at {candidate}. Expected "
-                f"<dir>/<measure>/velocity_objects.pkl, or pass a single .pkl file."
-            )
-        path = candidate
-    return load_velocity_matrix(path)
+    if not path.is_dir():
+        return load_velocity_matrix(path)
+
+    # Layout 1: <dir>/<measure>/velocity_objects.pkl
+    candidate = path / measure / "velocity_objects.pkl"
+    if candidate.exists():
+        return load_velocity_matrix(candidate)
+
+    # Layout 2: <dir>/batch_*_<measure>/Velocity/velocity_objects_new_*.pkl
+    matches = sorted(path.glob(f"batch_*_{measure}/Velocity/velocity_objects_new_*.pkl"))
+    if matches:
+        return load_velocity_matrix(matches[-1])
+
+    raise FileNotFoundError(
+        f"No velocity matrix for {measure!r} in {path}.\n"
+        f"  Tried: {candidate}\n"
+        f"  And:   {path}/batch_*_{measure}/Velocity/velocity_objects_new_*.pkl\n"
+        "Pass a single .pkl file, or check the directory layout."
+    )
 
 
 def infer_measures(df: pd.DataFrame, id_col: str = ID_COL, age_col: str = AGE_COL,
